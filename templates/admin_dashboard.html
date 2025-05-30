@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Admin Dashboard</h2>
+        <p>Welcome, Admin!</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Bank Summary</h5>
+                        <p class="card-text">Total Customers: {{ total_customers }}</p>
+                        <p class="card-text">Total Accounts: {{ total_accounts }}</p>
+                        <p class="card-text">Pending Loan Applications: <strong>{{ pending_loans_count }}</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Latest Transactions (Admin View)</h5>
+                        <ul>
+                            {% for transaction in latest_transactions %}
+                                <li>
+                                    {{ transaction.date.strftime('%Y-%m-%d %H:%M') }}:
+                                    {{ transaction.transaction_type }} on Account {{ transaction.account.account_number }} - ₹{{ "%.2f" % transaction.amount }}
+                                </li>
+                            {% else %}
+                                <li>No transactions yet.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mt-4">Admin Actions</h3>
+        <ul>
+            <li><a href="{{ url_for('admin_view_customers') }}">Manage Customers</a></li>
+            <li><a href="{{ url_for('admin_view_accounts') }}">Manage Accounts</a></li>
+            <li><a href="{{ url_for('admin_view_transactions') }}">View All Transactions</a></li>
+            <li><a href="{{ url_for('admin_view_loans') }}">Manage Loans</a></li>
+        </ul>
+
+        <p class="mt-4"><a href="{{ url_for('admin_logout') }}" class="btn btn-danger">Logout</a></p>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

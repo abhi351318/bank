@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Apply for Loan</h2>
+        <p><a href="{{ url_for('customer_dashboard') }}">Back to Dashboard</a></p>
+
+         {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="loan_amount">Loan Amount Requested:</label>
+                <input type="number" class="form-control" id="loan_amount" name="loan_amount" step="100" min="100" value="{{ form_data.loan_amount | default('', True) }}" required>
+            </div>
+             <div class="form-group">
+                <label for="term_months">Loan Term (Months):</label>
+                <input type="number" class="form-control" id="term_months" name="term_months" step="1" min="1" value="{{ form_data.term_months | default('', True) }}" required>
+            </div>
+             <div class="form-group">
+                <label for="interest_rate">Interest Rate (%):</label>
+                <input type="number" class="form-control" id="interest_rate" name="interest_rate" step="0.01" min="0" value="{{ form_data.interest_rate | default('5.0', True) }}" required>
+            </div>
+            <div class="form-group">
+                <label for="account_id">Account for Disbursement:</label>
+                <select class="form-control" id="account_id" name="account_id" required>
+                    <option value="">Select Account</option>
+                    {% for account in customer_accounts %}
+                        <option value="{{ account.id }}" {% if form_data.account_id and form_data.account_id == account.id %}selected{% endif %}>
+                            {{ account.account_number }} ({{ account.account_type }}) - ₹{{ "%.2f" % account.balance }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+        </form>
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

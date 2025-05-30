@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>All Transactions</h2>
+        <p><a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>From Account</th>
+                    <th>To Account</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>{{ transaction.transaction_type }}</td>
+                        <td>₹{{ "%.2f" % transaction.amount }}</td>
+                        <td>
+                            {% if transaction.account %}
+                                Account {{ transaction.account.account_number }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                         <td>
+                            {% if transaction.target_account %}
+                                Account {{ transaction.target_account.account_number }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>{{ transaction.description | default('No description') }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">No transactions found yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

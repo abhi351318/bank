@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Welcome, {{ customer.name }}!</h2>
+
+         {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h3>Your Accounts:</h3>
+        {% if customer_accounts %}
+            <div class="row">
+                {% for account in customer_accounts %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ account.account_type }} Account</h5>
+                                <p class="card-text">Account Number: <strong>{{ account.account_number }}</strong></p>
+                                <p class="card-text">Current Balance: <strong>₹{{ "%.2f" % account.balance }}</strong></p>
+                                <p class="card-text">Opened On: {{ account.opening_date.strftime('%Y-%m-%d') }}</p>
+                                {# Links for account actions #}
+                                <a href="{{ url_for('customer_view_account_transactions', account_id=account.id) }}" class="btn btn-sm btn-info">View Transactions</a>
+                                <a href="{{ url_for('customer_deposit', account_id=account.id) }}" class="btn btn-sm btn-primary">Deposit</a>
+                                <a href="{{ url_for('customer_withdraw', account_id=account.id) }}" class="btn btn-sm btn-secondary">Withdraw</a>
+                                <a href="{{ url_for('customer_transfer', account_id=account.id) }}" class="btn btn-sm btn-success">Transfer</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>You currently have no bank accounts. Something might have gone wrong during registration.</p>
+        {% endif %}
+
+        <h3 class="mt-4">Other Actions</h3>
+        <ul>
+            <li><a href="{{ url_for('customer_apply_loan') }}">Apply for Loan</a></li>
+            <li><a href="{{ url_for('customer_view_loans') }}">View Loan Status</a></li>
+             {# Placeholder for other potential customer actions #}
+             {# <li><a href="#">Open New Account</a></li> #}
+             {# <li><a href="#">Update Profile</a></li> #}
+        </ul>
+
+
+        <p class="mt-4"><a href="{{ url_for('customer_logout') }}" class="btn btn-danger">Logout</a></p>
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Transactions for Account: {{ account.account_number }} ({{ account.account_type }})</h2>
+        <p><a href="{{ url_for('customer_dashboard') }}">Back to Dashboard</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+         <div class="card mb-4">
+            <div class="card-header">Account Summary</div>
+             <div class="card-body">
+                <p><strong>Account Number:</strong> {{ account.account_number }}</p>
+                <p><strong>Account Type:</strong> {{ account.account_type }}</p>
+                <p><strong>Current Balance:</strong> ₹{{ "%.2f" % account.balance }}</p>
+                <p><strong>Opened On:</strong> {{ account.opening_date.strftime('%Y-%m-%d') }}</p>
+             </div>
+        </div>
+
+
+        <h3>Transaction History</h3>
+        {% if transactions %}
+            <table class="table table-bordered table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Related Account</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ transaction.transaction_type }}</td>
+                             <td>₹{{ "%.2f" % transaction.amount }}</td>
+                            <td>{{ transaction.description | default('No description') }}</td>
+                            <td>
+                                {% if transaction.transaction_type == 'Transfer (Debit)' and transaction.target_account %}
+                                    To Account {{ transaction.target_account.account_number }}
+                                {% elif transaction.transaction_type == 'Transfer (Credit)' and transaction.target_account %}
+                                    From Account {{ transaction.target_account.account_number }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No transactions found for this account yet.</p>
+        {% endif %}
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

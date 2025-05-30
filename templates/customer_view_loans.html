@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>My Loans</h2>
+        <p><a href="{{ url_for('customer_dashboard') }}">Back to Dashboard</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <p><a href="{{ url_for('customer_apply_loan') }}" class="btn btn-primary">Apply for New Loan</a></p>
+
+        {% if customer_loans %}
+             <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Loan ID</th>
+                        <th>Amount</th>
+                        <th>Term (Months)</th>
+                        <th>Rate (%)</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Disbursement Account</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in customer_loans %}
+                        <tr>
+                            <td>{{ loan.id }}</td>
+                            <td>₹{{ "%.2f" % loan.loan_amount }}</td>
+                            <td>{{ loan.term_months }}</td>
+                            <td>{{ "%.2f" % loan.interest_rate }}</td>
+                             <td>{{ loan.application_date.strftime('%Y-%m-%d') }}</td>
+                            <td><strong>{{ loan.status }}</strong></td>
+                             <td>
+                                 {% if loan.account %}
+                                     Account {{ loan.account.account_number }}
+                                 {% else %}
+                                     N/A (Account Deleted?)
+                                 {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You have no loan applications yet.</p>
+        {% endif %}
+
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

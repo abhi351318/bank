@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Edit Customer: {{ customer.name }} (#{{ customer.id }})</h2>
+        <p><a href="{{ url_for('admin_view_customer_details', customer_id=customer.id) }}">Back to Customer Details</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                {# Use form_data to repopulate if there was an error on POST #}
+                <input type="text" class="form-control" id="name" name="name" value="{{ form_data.get('name', customer.name) }}" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                 {# Use form_data or customer data #}
+                <input type="text" class="form-control" id="address" name="address" value="{{ form_data.get('address', customer.address) }}">
+            </div>
+            <div class="form-group">
+                <label for="contact_info">Contact Info (Email or Phone):</label>
+                 {# Use form_data or customer data #}
+                <input type="text" class="form-control" id="contact_info" name="contact_info" value="{{ form_data.get('contact_info', customer.contact_info) }}" required>
+            </div>
+            {# Password editing is not included here #}
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

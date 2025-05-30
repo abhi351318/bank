@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <p><a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <div class="card-body">
+                <p>This section is for generating various bank reports (e.g., customer lists, account summaries, transaction history filters, loan summaries).</p>
+
+                <p>Examples of reports to be implemented:</p>
+                <ul>
+                    <li><a href="#" class="disabled">List all Customers</a></li>
+                    <li><a href="#" class="disabled">Accounts by Balance Range</a></li>
+                    <li><a href="#" class="disabled">Transactions by Date Range/Type</a></li>
+                    <li><a href="#" class="disabled">Approved/Pending/Rejected Loans</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

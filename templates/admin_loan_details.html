@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Loan Details: Loan #{{ loan.id }}</h2>
+        <p><a href="{{ url_for('admin_view_loans') }}">Back to Manage Loans</a></p>
+
+         {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card mb-4">
+            <div class="card-header">Loan Information</div>
+            <div class="card-body">
+                <p><strong>Loan ID:</strong> {{ loan.id }}</p>
+                <p><strong>Customer:</strong>
+                    {% if loan.customer %}
+                        <a href="{{ url_for('admin_view_customer_details', customer_id=loan.customer.id) }}">{{ loan.customer.name }} (#{{ loan.customer.id }})</a>
+                    {% else %}
+                        N/A (Customer Deleted?)
+                    {% endif %}
+                </p>
+                 <p><strong>Disbursement Account:</strong>
+                    {% if loan.account %}
+                         Account {{ loan.account.account_number }} ({{ loan.account.account_type }})
+                    {% else %}
+                        N/A (Account Deleted?)
+                    {% endif %}
+                </p>
+                <p><strong>Amount:</strong> ₹{{ "%.2f" % loan.loan_amount }}</p>
+                <p><strong>Term:</strong> {{ loan.term_months }} Months</p>
+                <p><strong>Interest Rate:</strong> {{ "%.2f" % loan.interest_rate }} %</p>
+                <p><strong>Application Date:</strong> {{ loan.application_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Status:</strong> <strong>{{ loan.status }}</strong></p>
+                <p><strong>Approval/Rejection Date:</strong> {{ loan.approval_date.strftime('%Y-%m-%d %H:%M') if loan.approval_date else 'N/A' }}</p>
+
+                {# --- Admin Actions for Loan Status --- #}
+                {% if loan.status == 'Pending' %}
+                    <hr>
+                    <form action="{{ url_for('admin_approve_loan', loan_id=loan.id) }}" method="POST" style="display: inline-block;">
+                         <button type="submit" class="btn btn-success">Approve Loan</button>
+                    </form>
+                     <form action="{{ url_for('admin_reject_loan', loan_id=loan.id) }}" method="POST" style="display: inline-block;">
+                         <button type="submit" class="btn btn-danger">Reject Loan</button>
+                    </form>
+                {% elif loan.status == 'Approved' %}
+                    <p class="alert alert-success mt-3">This loan has been approved.</p>
+                {% elif loan.status == 'Rejected' %}
+                     <p class="alert alert-warning mt-3">This loan has been rejected.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Section for Repayment Tracking (To be implemented) #}
+        <div class="card mb-4">
+            <div class="card-header">Repayment History (To be implemented)</div>
+            <div class="card-body">
+                <p>Details of loan repayments would be listed here.</p>
+            </div>
+        </div>
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Manage Loans</h2>
+        <p><a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Customer</th>
+                    <th>Account</th>
+                    <th>Amount</th>
+                    <th>Term (Months)</th>
+                    <th>Rate (%)</th>
+                    <th>Application Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans %}
+                    <tr>
+                        <td>{{ loan.id }}</td>
+                        <td>
+                            {% if loan.customer %}
+                                <a href="{{ url_for('admin_view_customer_details', customer_id=loan.customer.id) }}">{{ loan.customer.name }} (#{{ loan.customer.id }})</a>
+                            {% else %}
+                                N/A (Customer Deleted?)
+                            {% endif %}
+                        </td>
+                         <td>
+                            {% if loan.account %}
+                                Account {{ loan.account.account_number }}
+                            {% else %}
+                                N/A (Account Deleted?)
+                            {% endif %}
+                        </td>
+                        <td>₹{{ "%.2f" % loan.loan_amount }}</td>
+                        <td>{{ loan.term_months }}</td>
+                        <td>{{ "%.2f" % loan.interest_rate }}</td>
+                        <td>{{ loan.application_date.strftime('%Y-%m-%d') }}</td>
+                        <td><strong>{{ loan.status }}</strong></td>
+                        <td>
+                            <a href="{{ url_for('admin_view_loan_details', loan_id=loan.id) }}" class="btn btn-sm btn-info">View Details</a>
+                             <a href="#" class="btn btn-sm btn-secondary disabled">Edit</a> {# Still placeholder #}
+                             <a href="#" class="btn btn-sm btn-danger disabled">Delete</a> {# Still placeholder #}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9">No loan applications found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Page{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="container mt-5">
+        <h2>Manage Accounts</h2>
+        <p><a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Account Number</th>
+                    <th>Account Type</th>
+                    <th>Balance</th>
+                    <th>Opened On</th>
+                    <th>Customer</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.id }}</td>
+                        <td>{{ account.account_number }}</td>
+                        <td>{{ account.account_type }}</td>
+                        <td>₹{{ "%.2f" % account.balance }}</td>
+                        <td>{{ account.opening_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if account.customer %}
+                                <a href="{{ url_for('admin_view_customer_details', customer_id=account.customer.id) }}">{{ account.customer.name }} (#{{ account.customer.id }})</a>
+                            {% else %}
+                                N/A (Customer Deleted?)
+                            {% endif %}
+                        </td>
+                        <td>
+                             <a href="#">View Transactions</a> | {# Still placeholder #}
+                            <a href="#">Edit</a> | {# Still placeholder #}
+                            <a href="#">Delete</a> {# Still placeholder #}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">No accounts found yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+{% endblock %}
